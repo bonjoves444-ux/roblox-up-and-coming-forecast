@@ -189,6 +189,8 @@ function main(): void {
     let anonId = -1;
     for (let h = 0; h < hours; h++) {
       // Spawn anonymous entrants (Poisson-ish via Bernoulli per hour on rate<1).
+      // A rocket entrant gets a strong persistent climbing drift; the rest get
+      // a small drift that mostly fades them out.
       if (rng() < ENTRANT_RATE) {
         const rocket = rng() < ENTRANT_ROCKET_P;
         agents.push({
@@ -198,8 +200,8 @@ function main(): void {
           named: false,
         });
       }
-      // Update each agent: velocity deviation is AR(1); rank moves by the
-      // band drift plus the deviation.
+      // Update each agent: the velocity deviation is AR(1), and the rank
+      // moves by the band drift plus the persistent drift plus the deviation.
       for (const a of agents) {
         const b = bandOf(a.rank);
         a.vel = PHI * a.vel + gauss() * b.sd;
