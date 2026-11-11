@@ -60,6 +60,7 @@ const GROWTH_K = 6; // persistent drift = -K * relative log playing growth/hr (t
 const ENTRANT_RATE = 0.8;    // anonymous new games per hour
 const ENTRANT_ROCKET_P = 0.16; // share of entrants that are strong climbers
 const OFF_CHART = 100;       // rank past this leaves the chart
+const OFF_CHART_RANK = 105;  // starting rank for a game absent from the last read (just off the chart)
 const MIN_P = 0.003;         // smallest probability row we emit
 const MAX_ROWS_PER_PLACE = 100;
 const NAMED_MASS_CAP = 0.85; // never name more than this of a place; rest unnamed
@@ -148,7 +149,7 @@ function main(): void {
     const lastObs = obs[obs.length - 1]!;
     const inLastRead = lastObs.t === lastAt;
     // Current rank: last observed rank, or off-chart (105) if not in the last read.
-    const rank = inLastRead ? lastObs.rank : 105;
+    const rank = inLastRead ? lastObs.rank : OFF_CHART_RANK;
     // Initial velocity deviation is 0: past rank velocity does not predict
     // 72h movement (corr ~0.05), so the AR(1) starts from rest and the
     // persistent growth drift below carries the signal.
